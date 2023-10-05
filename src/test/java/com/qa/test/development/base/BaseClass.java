@@ -5,12 +5,14 @@ import com.qa.test.development.utils.Utils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.InteractsWithApps;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.screenrecording.CanRecordScreen;
-import io.netty.handler.codec.base64.Base64Decoder;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Base64OutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -19,61 +21,185 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 
 import java.io.*;
 import java.net.URL;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 public class BaseClass {
 
-    protected static AppiumDriver driver;
-    protected static Properties properties;
-    protected static Properties propertiesTestData;
+    protected static ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
+    protected static ThreadLocal<Properties> properties = new ThreadLocal<>();
+    protected static ThreadLocal<Properties> propertiesTestData = new ThreadLocal<>();
 
-    String platform;
-    String dateTime;
+    ThreadLocal<String> platform = new ThreadLocal<>();
+    ThreadLocal<String> dateTime = new ThreadLocal<>();
 
+    Utils utils=new Utils();
     public BaseClass() {
-        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+        PageFactory.initElements(new AppiumFieldDecorator(getDriver()), this);
     }
 
-    @Parameters({"platformName", "platformVersion", "deviceUDID","deviceName"})
+    @Parameters({"platformName", "platformVersion", "deviceUDID", "deviceName"})
     @BeforeTest
-    public void beforeTest(String platformName, String platformVersion, String deviceUDID,String deviceName) {
+    public synchronized void beforeTest(String platformName, String platformVersion, String deviceUDID, String deviceName) {
+
+        String logs="logs"+File.separator+platformName+"_"+deviceName;
+        File logFile=new File(logs);
+        if(!logFile.exists()){
+            logFile.mkdirs();
+        }
+        ThreadContext.put("ROUTINGKEY",logs);
         try {
-            dateTime = Utils.dateAndTime();
+            setDateAndTime(Utils.dateAndTime());
+            AppiumDriver driver;
             String file =
-                    System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "resources" + File.separator + "config.properties";
+                    System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "config.properties";
             InputStream inputStream = new FileInputStream(file);
-            properties = new Properties();
-            properties.load(inputStream);
-            DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
-            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
-            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME,deviceName);
-            desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
-            desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, properties.getProperty("androidAutomationName"));
-            String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("androidSauceLabsOldAppLocation");
+            Properties properties = new Properties();
+            setProperties(properties);
+            getProperties().load(inputStream);
+            setPlatform(platformName);
+            utils.logger().info("Test Logs:");
+/*
 
-            //desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
-            desiredCapabilities.setCapability("appPackage", properties.getProperty("androidSwagLabOldAppPackage"));
-            desiredCapabilities.setCapability("appActivity", properties.getProperty("androidSwagLabOldAppActivity"));
+            //For using Single server-> declaring the url globally
+            URL url = new URL(getProperties().getProperty("appiumURL"));
 
-            URL url = new URL(properties.getProperty("appiumURL"));
-            driver = new AndroidDriver(url, desiredCapabilities);
+            switch (deviceUDID) {
+                case "ce10171ab374340704" -> {
+                    DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
+                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
+                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, getProperties().getProperty(
+                            "androidAutomationName"));
+                    String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("androidSauceLabsOldAppLocation");
 
+                    //               desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
+                    desiredCapabilities.setCapability("appPackage", getProperties().getProperty("androidSwagLabOldAppPackage"));
+                    desiredCapabilities.setCapability("appActivity", getProperties().getProperty("androidSwagLabOldAppActivity"));
+
+                 //   URL url = new URL(getProperties().getProperty("appiumURLThiru"));
+                    driver = new AndroidDriver(url, desiredCapabilities);
+                    setDriver(driver);
+                }
+                case "1383272767000GR" -> {
+                    DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
+                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
+                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, getProperties().getProperty(
+                            "androidAutomationName"));
+                    String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("androidSauceLabsOldAppLocation");
+
+                    //               desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
+                    desiredCapabilities.setCapability("appPackage", getProperties().getProperty("androidSwagLabOldAppPackage"));
+                    desiredCapabilities.setCapability("appActivity", getProperties().getProperty("androidSwagLabOldAppActivity"));
+
+                   // URL url = new URL(getProperties().getProperty("appiumURLArun"));
+                    driver = new AndroidDriver(url, desiredCapabilities);
+                    setDriver(driver);
+                }
+            }
+
+*/
+
+            //For using Multiple server-> declaring the url in each statement.
+
+            switch (deviceUDID) {
+                case "ce10171ab374340704" -> {
+                    DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
+                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
+                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, getProperties().getProperty(
+                            "androidAutomationName"));
+                    String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("androidSauceLabsOldAppLocation");
+
+                    //               desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
+                    desiredCapabilities.setCapability("appPackage", getProperties().getProperty("androidSwagLabOldAppPackage"));
+                    desiredCapabilities.setCapability("appActivity", getProperties().getProperty("androidSwagLabOldAppActivity"));
+                    utils.logger().info("Device Logs:");
+                    URL url = new URL(getProperties().getProperty("appiumURLThiru"));
+                    driver = new AndroidDriver(url, desiredCapabilities);
+                    setDriver(driver);
+                }
+                case "1383272767000GR" -> {
+                    DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
+                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
+                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, getProperties().getProperty(
+                            "androidAutomationName"));
+                    utils.logger().info("Device 2 Logs:");
+                    String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("androidSauceLabsOldAppLocation");
+
+                    //desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
+                    desiredCapabilities.setCapability("appPackage", getProperties().getProperty("androidSwagLabOldAppPackage"));
+                    desiredCapabilities.setCapability("appActivity", getProperties().getProperty("androidSwagLabOldAppActivity"));
+
+                     URL url = new URL(getProperties().getProperty("appiumURLArun"));
+                    driver = new AndroidDriver(url, desiredCapabilities);
+                    setDriver(driver);
+                }
+            }
+
+          /*
+           //Normal Execution:
+           switch (platformName) {
+                case "Android" -> {
+                    DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
+                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
+                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, getProperties().getProperty(
+                            "androidAutomationName"));
+                    String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("androidSauceLabsOldAppLocation");
+
+     //               desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
+                    desiredCapabilities.setCapability("appPackage", getProperties().getProperty("androidSwagLabOldAppPackage"));
+                    desiredCapabilities.setCapability("appActivity", getProperties().getProperty("androidSwagLabOldAppActivity"));
+
+                    URL url = new URL(getProperties().getProperty("appiumURL"));
+                    driver = new AndroidDriver(url, desiredCapabilities);
+                    setDriver(driver);
+                }
+                case "iOS" -> {
+                    DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
+                    desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+                    desiredCapabilities.setCapability(MobileCapabilityType.UDID, deviceUDID);
+                    desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, getProperties().getProperty(
+                            "androidAutomationName"));
+                    String appURL = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "application" + File.separator + properties.getProperty("iOSSauceLabsOldAppLocation");
+
+                    //desiredCapabilities.setCapability(MobileCapabilityType.APP, appURL);
+                    desiredCapabilities.setCapability("appPackage", getProperties().getProperty("iOSBundleId"));
+
+                    URL url = new URL(getProperties().getProperty("appiumURL"));
+                    driver = new IOSDriver(url, desiredCapabilities);
+                    setDriver(driver);
+                }
+            }
+*/
             String testDataFile =
-                    System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator + "development" + File.separator + "resources" + File.separator + "testData.properties";
+                    System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" +  File.separator + "resources" + File.separator + "testData.properties";
             InputStream inputFile = new FileInputStream(testDataFile);
-            propertiesTestData = new Properties();
-            propertiesTestData.load(inputFile);
-            platform = platformName;
+            Properties propertiesTestData = new Properties();
+            setPropertiesTestData(propertiesTestData);
+            getPropertiesTestData().load(inputFile);
+
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -81,25 +207,26 @@ public class BaseClass {
         }
     }
 
-    @BeforeTest
-    public void beforeMethod(){
-        ((CanRecordScreen)driver).stopRecordingScreen();
+    @BeforeTest(enabled = false)
+    public synchronized void beforeMethod() {
+        ((CanRecordScreen) getDriver()).startRecordingScreen();
 
     }
-    @AfterMethod
-    public void afterMethod(ITestResult result){
-        String media=((CanRecordScreen)driver).stopRecordingScreen();
-        Map<String,String> params=result.getTestContext().getCurrentXmlTest().getAllParameters();
+
+    @AfterMethod(enabled = false)
+    public void afterMethod(ITestResult result) {
+        var media = ((CanRecordScreen) getDriver()).stopRecordingScreen();
+        Map<String, String> params = result.getTestContext().getCurrentXmlTest().getAllParameters();
 
         String videoFile =
                 System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator +
                         "java" + File.separator + "com" + File.separator + "qa" + File.separator + "test" + File.separator +
-                        "development" + File.separator + "videoRecorder" + File.separator + params.get("deviceName") + " " +
-                        params.get("platformName") + "v" + params.get("platformVersion") + " " +getDateAndTime()+
-                        " " + result.getName() ;
-        File file=new File(videoFile);
+                        "development" + File.separator + "videoRecorder" + File.separator + params.get("deviceName") +" "+ getDateAndTime()+" "+
+                        params.get("platformName") + "v" + params.get("platformVersion") +
+                        " " + result.getName();
+        File file = new File(videoFile);
         try {
-            FileOutputStream fileOutputStream=new FileOutputStream(file+".mp4");
+            FileOutputStream fileOutputStream = new FileOutputStream(file + ".mp4");
             fileOutputStream.write(Base64.decodeBase64(media));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -110,7 +237,7 @@ public class BaseClass {
 
     public void waitForElement(WebElement element) {
         try {
-            Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(Utils.wait));
+            Wait<WebDriver> wait = new WebDriverWait(getDriver(), Duration.ofSeconds(Utils.wait));
             wait.until(ExpectedConditions.visibilityOf(element));
         } catch (Exception e) {
             System.out.println(e);
@@ -154,32 +281,48 @@ public class BaseClass {
         element.clear();
     }
 
-    public void closeApp() {
-        switch (platform) {
-            case "Android": {
-                ((InteractsWithApps) driver).terminateApp(properties.getProperty("androidSwagLabOldAppPackage"));
-                break;
-            }
-            default:
-                System.out.println("Enter valid platform");
-        }
+    public AppiumDriver getDriver() {
+        return driver.get();
     }
 
-    public void openApp() {
-        switch (platform) {
-            case "Android": {
-                ((InteractsWithApps) driver).activateApp(properties.getProperty("androidSwagLabOldAppPackage"));
-                break;
-            }
-            default:
-                System.out.println("Enter valid platform");
-        }
+    public void setDriver(AppiumDriver driver1) {
+        driver.set(driver1);
     }
-    public AppiumDriver getDriver(){
-        return driver;
+
+    public String getPlatform() {
+        return platform.get();
     }
+
+    public void setPlatform(String platform1) {
+        platform.set(platform1);
+    }
+
+    public String getDateAndTime() {
+        return dateTime.get();
+    }
+
+    public void setDateAndTime(String dateTime1) {
+        dateTime.set(dateTime1);
+    }
+
+    public Properties getProperties() {
+        return properties.get();
+    }
+
+    public void setProperties(Properties properties1) {
+        properties.set(properties1);
+    }
+
+    public Properties getPropertiesTestData() {
+        return propertiesTestData.get();
+    }
+
+    public void setPropertiesTestData(Properties propertiesTestData1) {
+        propertiesTestData.set(propertiesTestData1);
+    }
+
     public void scrollableOld(WebElement element, double percentageValue) {
-        driver.executeScript("mobile: scrollGesture", ImmutableMap.of(
+        getDriver().executeScript("mobile: scrollGesture", ImmutableMap.of(
                 "elementId", ((RemoteWebElement) element).getId(),
                 "direction", "down",
                 "percent", percentageValue
@@ -191,12 +334,32 @@ public class BaseClass {
 //        (\"<parent_locator>")).scrollIntoView("+ " new UISelector().description(\"<child_locator>\"));");
 //    }
 
-    public String getDateAndTime(){
-        return dateTime;
+    /*
+    public void closeApp() {
+        switch (getPlatform()) {
+            case "Android": {
+                ((InteractsWithApps) getDriver()).terminateApp(getProperties().getProperty("androidSwagLabOldAppPackage"));
+                break;
+            }
+            default:
+                System.out.println("Enter valid platform");
+        }
     }
+
+    public void openApp() {
+        switch (getPlatform()) {
+            case "Android": {
+                ((InteractsWithApps) getDriver()).activateApp(getProperties().getProperty("androidSwagLabOldAppPackage"));
+                break;
+            }
+            default:
+                System.out.println("Enter valid platform");
+        }
+    }
+    */
     @AfterTest
     public void afterTest() {
-        driver.quit();
+        getDriver().quit();
 
     }
 }

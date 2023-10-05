@@ -5,6 +5,8 @@ import com.qa.test.development.pages.LoginPage;
 import com.qa.test.development.pages.ProductsPage;
 
 import com.qa.test.development.pages.SettingsPage;
+import com.qa.test.development.utils.Utils;
+import jdk.jshell.execution.Util;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.testng.Assert;
@@ -20,7 +22,7 @@ public class LoginTestcase extends BaseClass {
     JSONObject jsonObject;
     InputStream dataInputStream;
     SettingsPage settingsPage;
-
+Utils utils=new Utils();
     @BeforeClass
     public void beforeClass() throws IOException {
 
@@ -51,41 +53,46 @@ public class LoginTestcase extends BaseClass {
 
     @Test
     public void invalidUsername() {
+        utils.logger().info("invalidUsername");
         loginPage.setUserName(jsonObject.getJSONObject("invalidUsername").getString("username"));
         loginPage.setPassword(jsonObject.getJSONObject("invalidUsername").getString("password"));
         loginPage.loginButton();
         String actual = loginPage.errorMessage();
-        String expected = propertiesTestData.getProperty("errorMessage");
+        String expected = getPropertiesTestData().getProperty("errorMessage");
         Assert.assertEquals(actual, expected);
     }
 
     @Test
     public void invalidPassword() {
+        utils.logger().info("invalidPassword");
         loginPage.setUserName("standard_user");
         loginPage.setPassword("secret_sauce11");
         loginPage.loginButton();
+        utils.logger().info("Test Logs:");
         String actual = loginPage.errorMessage();
-        String expected = propertiesTestData.getProperty("errorMessage");
+        String expected = getPropertiesTestData().getProperty("errorMessage");
         Assert.assertEquals(actual, expected);
     }
 
     @Test
     public void invalidUsernameAndPassword() {
+        utils.logger().info("invalidUsernameAndPassword");
         loginPage.setUserName("standard_user11");
         loginPage.setPassword("secret_sauce11");
         loginPage.loginButton();
         String actual = loginPage.errorMessage();
-        String expected = propertiesTestData.getProperty("errorMessage");
+        String expected = getPropertiesTestData().getProperty("errorMessage");
         Assert.assertEquals(actual, expected);
     }
 
     @Test
     public void validCredentials() {
+        utils.logger().info("validCredentials");
         loginPage.setUserName("standard_user");
         loginPage.setPassword("secret_sauce");
         productsPage = loginPage.loginButton();
         String actual = productsPage.verifyLogin();
-        String expected = propertiesTestData.getProperty("productsTitle");
+        String expected = getPropertiesTestData().getProperty("productsTitle");
         Assert.assertEquals(actual, expected);
         settingsPage=productsPage.menuButton();
         loginPage=settingsPage.logout();

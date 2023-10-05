@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="All Test Suite">
+<suite name="All Test Suite" parallel="tests">
     <listeners>
         <listener class-name="com.qa.test.development.listeners.Listeners"/>
     </listeners>
-    <test verbose="2" preserve-order="true" name="C:/Learning/AppiumFramework/src/test/java/com/qa/test">
+
+    <test name="Thiru's Device">
         <parameter name="platformName" value="Android"/>
         <parameter name="platformVersion" value="9"/>
         <parameter name="deviceUDID" value="ce10171ab374340704"/>
         <parameter name="deviceName" value="Samsung Galaxy S8+"/>
         <classes>
-           <!-- <class name="com.qa.test.testCases.LoginTestcase"/>
-           --> <class name="com.qa.test.testCases.ProductScreenTestCase"/>
+            <!-- <class name="com.qa.test.testCases.LoginTestcase"/>
+            -->
+            <class name="com.qa.test.testCases.ProductScreenTestCase"/>
         </classes>
     </test>
+    <!--<test name="Arun's Device">
+        <parameter name="platformName" value="Android"/>
+        <parameter name="platformVersion" value="12"/>
+        <parameter name="deviceUDID" value="1383272767000GR"/>
+        <parameter name="deviceName" value="vivo Y21e"/>
+        <classes>
+            &lt;!&ndash; <class name="com.qa.test.testCases.LoginTestcase"/>
+            &ndash;&gt;
+            <class name="com.qa.test.testCases.ProductScreenTestCase"/>
+        </classes>
+    </test>
+-->
 </suite>

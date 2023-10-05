@@ -27,7 +27,7 @@ public class Listeners implements ITestListener {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
             result.getThrowable().printStackTrace(printWriter);
-            System.out.println("Listeners: " + stringWriter);
+            System.out.println("Listeners: " + stringWriter.toString());
         }
 
         BaseClass baseClass = new BaseClass();
