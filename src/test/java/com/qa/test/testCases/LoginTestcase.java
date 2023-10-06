@@ -22,7 +22,6 @@ public class LoginTestcase extends BaseClass {
     JSONObject jsonObject;
     InputStream dataInputStream;
     SettingsPage settingsPage;
-Utils utils=new Utils();
     @BeforeClass
     public void beforeClass() throws IOException {
 
@@ -53,7 +52,7 @@ Utils utils=new Utils();
 
     @Test
     public void invalidUsername() {
-        utils.logger().info("invalidUsername");
+        Utils.logger().info("invalidUsername");
         loginPage.setUserName(jsonObject.getJSONObject("invalidUsername").getString("username"));
         loginPage.setPassword(jsonObject.getJSONObject("invalidUsername").getString("password"));
         loginPage.loginButton();
@@ -64,11 +63,10 @@ Utils utils=new Utils();
 
     @Test
     public void invalidPassword() {
-        utils.logger().info("invalidPassword");
+        Utils.logger().info("invalidPassword");
         loginPage.setUserName("standard_user");
         loginPage.setPassword("secret_sauce11");
         loginPage.loginButton();
-        utils.logger().info("Test Logs:");
         String actual = loginPage.errorMessage();
         String expected = getPropertiesTestData().getProperty("errorMessage");
         Assert.assertEquals(actual, expected);
@@ -76,7 +74,7 @@ Utils utils=new Utils();
 
     @Test
     public void invalidUsernameAndPassword() {
-        utils.logger().info("invalidUsernameAndPassword");
+        Utils.logger().info("invalidUsernameAndPassword");
         loginPage.setUserName("standard_user11");
         loginPage.setPassword("secret_sauce11");
         loginPage.loginButton();
@@ -87,7 +85,7 @@ Utils utils=new Utils();
 
     @Test
     public void validCredentials() {
-        utils.logger().info("validCredentials");
+        Utils.logger().info("validCredentials");
         loginPage.setUserName("standard_user");
         loginPage.setPassword("secret_sauce");
         productsPage = loginPage.loginButton();

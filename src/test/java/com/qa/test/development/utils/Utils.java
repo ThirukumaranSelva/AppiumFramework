@@ -17,7 +17,7 @@ public class Utils {
         return dateFormat.format(date);
     }
 
-    public Logger logger() {
+    public static Logger logger() {
         return LogManager.getLogger(BaseClass.class.getName());
     }
 }

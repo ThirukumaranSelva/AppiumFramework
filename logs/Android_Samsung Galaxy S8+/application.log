@@ -1,3 +1,38 @@
-[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-05 20:03:54.520 BaseClass:68 - Test Logs:
-[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-05 20:03:54.563 BaseClass:131 - Device Logs:
-[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-05 20:04:07.522 BaseClass:71 - validateProductDetails
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:45:18.102 BaseClass:72 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:45:18.161 BaseClass:139 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:45:19.847 BaseClass:66 - invalidPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:46:47.934 BaseClass:72 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:46:47.987 BaseClass:139 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:47:03.099 BaseClass:66 - invalidPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:47:09.936 BaseClass:55 - invalidUsername
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:47:15.535 BaseClass:77 - invalidUsernameAndPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:47:20.457 BaseClass:88 - validCredentials
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:47:30.538 BaseClass:54 - validateProduct
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 18:47:41.950 BaseClass:70 - validateProductDetails
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:03:19.991 BaseClass:73 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:03:20.018 BaseClass:140 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:03:21.138 BaseClass:66 - invalidPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:04:51.737 BaseClass:73 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:04:51.771 BaseClass:140 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:05:03.933 BaseClass:66 - invalidPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:05:10.981 BaseClass:55 - invalidUsername
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:05:16.304 BaseClass:77 - invalidUsernameAndPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:05:21.177 BaseClass:88 - validCredentials
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:05:31.011 BaseClass:54 - validateProduct
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:05:41.297 BaseClass:70 - validateProductDetails
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:19:31.611 BaseClass:73 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:19:31.642 BaseClass:140 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:19:43.799 BaseClass:66 - invalidPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:19:50.680 BaseClass:55 - invalidUsername
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:19:55.654 BaseClass:77 - invalidUsernameAndPassword
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:20:01.038 BaseClass:88 - validCredentials
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:20:10.897 BaseClass:54 - validateProduct
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:20:21.260 BaseClass:70 - validateProductDetails
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:23:54.897 BaseClass:73 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:23:54.927 BaseClass:140 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:24:06.771 BaseClass:54 - validateProduct
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:24:19.018 BaseClass:70 - validateProductDetails
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:46:56.615 BaseClass:75 - Test Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:46:56.643 BaseClass:142 - Device Logs:
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:47:09.972 BaseClass:54 - validateProduct
+[logsAndroid_Samsung Galaxy S8+ INFO ] 2023-10-06 19:47:22.135 BaseClass:70 - validateProductDetails

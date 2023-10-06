@@ -22,7 +22,6 @@ public class ProductScreenTestCase extends BaseClass {
     JSONObject jsonObject;
     SettingsPage settingsPage;
     ProductsDetailsPage productsDetailsPage;
-    Utils utils=new Utils();
 
     @BeforeClass
     public void beforeClass() throws IOException {
@@ -50,9 +49,9 @@ public class ProductScreenTestCase extends BaseClass {
         loginPage = new LoginPage();
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void validateProduct() {
-        utils.logger().info("validateProduct");
+        Utils.logger().info("validateProduct");
         productsPage = loginPage.loginPage(jsonObject.getJSONObject("validCredentials").getString("username"),
                 jsonObject.getJSONObject("validCredentials").getString("password"));
         String actualProductTitle = productsPage.productTitle();
@@ -68,7 +67,7 @@ public class ProductScreenTestCase extends BaseClass {
     @Test
     public synchronized void validateProductDetails() {
 
-        utils.logger().info("validateProductDetails");
+        Utils.logger().info("validateProductDetails");
 
         productsPage = loginPage.loginPage(jsonObject.getJSONObject("validCredentials").getString("username"),
                 jsonObject.getJSONObject("validCredentials").getString("password"));
